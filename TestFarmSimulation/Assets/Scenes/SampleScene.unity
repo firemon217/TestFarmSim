@@ -119,6 +119,79 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &298015985 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1592486231757103025, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+  m_PrefabInstance: {fileID: 7024249617048365820}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &298015988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298015985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46cd3adce2ec4ae4197bc2206735e69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OrientationSharpness: 10
+--- !u!114 &298015989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298015985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74e948ba9660a504c9cbffe7d28f7474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxStableMoveSpeed: 10
+  SprintMutlySpeed: 1.5
+  StableMovementSharpness: 15
+  MaxAirMoveSpeed: 10
+  AirAccelerationSpeed: 5
+  Drag: 0.1
+  Gravity: {x: 0, y: -30, z: 0}
+--- !u!114 &298015991 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5174158690239321511, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+  m_PrefabInstance: {fileID: 7024249617048365820}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298015985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1bc5515e3ab954e80599c538834774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &298015993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298015985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeaefc906bf872145bd6a5e88a6a747b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  JumpSpeed: 10
+--- !u!114 &298015994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298015985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9939239bd92353d4da75ab8d57ef0657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +362,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &866127201 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3999758446930060142, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+  m_PrefabInstance: {fileID: 7024249617048365820}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &952688520
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,10 +528,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: Camera
+      value: 
+      objectReference: {fileID: 866127201}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: _motor
+      value: 
+      objectReference: {fileID: 298015991}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: JumpConfig
+      value: 
+      objectReference: {fileID: 298015993}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: MoveConfig
+      value: 
+      objectReference: {fileID: 298015989}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: CrouchConfig
+      value: 
+      objectReference: {fileID: 298015994}
+    - target: {fileID: 8812358407122536023, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      propertyPath: RotateConfig
+      value: 
+      objectReference: {fileID: 298015988}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1592486231757103025, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 298015989}
+    - targetCorrespondingSourceObject: {fileID: 1592486231757103025, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      insertIndex: 5
+      addedObject: {fileID: 298015988}
+    - targetCorrespondingSourceObject: {fileID: 1592486231757103025, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 298015993}
+    - targetCorrespondingSourceObject: {fileID: 1592486231757103025, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
+      insertIndex: 7
+      addedObject: {fileID: 298015994}
   m_SourcePrefab: {fileID: 100100000, guid: 48cb0ed765ebd1a45b6a6f7b7e6d7e15, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -1,44 +1,46 @@
 using KinematicCharacterController;
 using UnityEngine;
 
-namespace PlayerController
+namespace Controller
 {
     public class RotateModule
     {
         private Vector3 _lookInputVector;
-        private KinematicCharacterMotor _motor;
-        private float _orientationSharpness;
-        private Quaternion _cameraPlanarRotation;
+        private RotateConfig _rotateConfig;
+        private IPhysicsController _physicsController;
+        private IInputController _inputController;
+        
 
-        public Quaternion CameraPlanarRotation => _cameraPlanarRotation;
+        public Quaternion CameraPlanarRotation;
 
-        public RotateModule(ref KinematicCharacterMotor motor, float orientationSharpness) 
-        { 
-            _motor = motor;
-            _orientationSharpness = orientationSharpness;
+        public RotateModule(RotateConfig rotateConfig, IPhysicsController physicsController, IInputController inputController) 
+        {
+            _inputController = inputController;
+            _rotateConfig = rotateConfig;
+            _physicsController = physicsController;
         }
 
-        public void InputRotate(Quaternion cameraRotation)
+        public void InputRotate()
         {
             // Calculate camera direction and rotation on the character plane
-            Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(cameraRotation * Vector3.forward, _motor.CharacterUp).normalized;
+            Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(_inputController.CameraRotation * Vector3.forward, _physicsController.Motor.CharacterUp).normalized;
             if (cameraPlanarDirection.sqrMagnitude == 0f)
             {
-                cameraPlanarDirection = Vector3.ProjectOnPlane(cameraRotation * Vector3.up, _motor.CharacterUp).normalized;
+                cameraPlanarDirection = Vector3.ProjectOnPlane(_inputController.CameraRotation * Vector3.up, _physicsController.Motor.CharacterUp).normalized;
             }
-            _cameraPlanarRotation = Quaternion.LookRotation(cameraPlanarDirection, _motor.CharacterUp);
+            _physicsController.CameraPlanarRotation = Quaternion.LookRotation(cameraPlanarDirection, _physicsController.Motor.CharacterUp);
             _lookInputVector = cameraPlanarDirection;
         }
 
-        public void HandlRotate(ref Quaternion currentRotation, float deltaTime)
+        public void HandlRotate()
         {
-            if (_lookInputVector != Vector3.zero && _orientationSharpness > 0f)
+            if (_lookInputVector != Vector3.zero && _rotateConfig.OrientationSharpness > 0f)
             {
                 // Smoothly interpolate from current to target look direction
-                Vector3 smoothedLookInputDirection = Vector3.Slerp(_motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-_orientationSharpness * deltaTime)).normalized;
+                Vector3 smoothedLookInputDirection = Vector3.Slerp(_physicsController.Motor.CharacterForward, _lookInputVector, 1 - Mathf.Exp(-_rotateConfig.OrientationSharpness * _physicsController.DeltaTime)).normalized;
 
                 // Set the current rotation (which will be used by the KinematicCharacterMotor)
-                currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, _motor.CharacterUp);
+                _physicsController.CurrentRotation = Quaternion.LookRotation(smoothedLookInputDirection, _physicsController.Motor.CharacterUp);
             }
         }
 

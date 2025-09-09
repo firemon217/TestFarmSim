@@ -27,7 +27,7 @@ namespace PlayerController
 
         public override void UpdateVelocity(PlayerController player, ref Vector3 currentVelocity, float deltaTime)
         {
-            player._move.HandleMoveing(ref currentVelocity, deltaTime);
+            //player._move.HandleMoveing(ref currentVelocity, deltaTime);
         }
     }
 }

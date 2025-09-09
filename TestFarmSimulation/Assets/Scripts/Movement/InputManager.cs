@@ -1,22 +1,23 @@
-﻿using UnityEngine;
+﻿using KinematicCharacterController;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace PlayerController
+namespace Controller
 {
-    public class InputCharacterManager
+    public class InputManager
     {
         private GameObject _camera;
-        private PlayerController _character;
-        private PlayerCharacterInputs _characterInputs;
+        private IEntityController _character;
+        private IInputController _characterInputs;
 
         private GameInput _gameInput;
 
-        public InputCharacterManager(GameObject camera, PlayerController character, ref PlayerCharacterInputs characterInputs)
+        public InputManager(IEntityController controller, IInputController input, GameObject camera)
         {
             _gameInput = new GameInput();
             _gameInput.Enable();
-            _character = character;
-            _characterInputs = characterInputs;
+            _character = controller;
+            _characterInputs = input;
             _camera = camera;
         }
 

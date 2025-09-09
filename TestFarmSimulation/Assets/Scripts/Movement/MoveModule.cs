@@ -2,85 +2,71 @@ using KinematicCharacterController;
 using UnityEngine;
 
 
-namespace PlayerController
+namespace Controller
 {
     public class MoveModule
     {
-        private KinematicCharacterMotor _motor;
-        private Vector3 _moveInputVector;
-
-        [Header("Stable Movement")]
-        private float _maxStableMoveSpeed = 10f;
-        private float _sprintMutlySpeed = 1.5f;
-        private float _stableMovementSharpness = 15;
-
-        [Header("Air Movement")]
-        private float _maxAirMoveSpeed = 10f;
-        private float _airAccelerationSpeed = 5f;
-        private float _drag = 0.1f;
-
-        [Header("Misc")]
-        private Vector3 _gravity = new Vector3(0, -30f, 0);
+        private MoveConfig _moveConfig;
+        private IPhysicsController _physicsController;
+        private IInputController _inputController;
 
         private bool _sprint = false;
+        private Vector3 _moveInputVector;
 
-        public MoveModule(ref KinematicCharacterMotor motor, float maxStableMoveSpeed, float stableMovementSharpness, float maxAirMoveSpeed, float airAccelerationSpeed, float drag, float sprintMultySpeed) 
-        { 
-            _motor = motor;
-            _maxStableMoveSpeed = maxStableMoveSpeed;
-            _stableMovementSharpness = stableMovementSharpness;
-            _airAccelerationSpeed = airAccelerationSpeed;
-            _drag = drag;
-            _maxAirMoveSpeed = maxAirMoveSpeed;
-            _sprintMutlySpeed = sprintMultySpeed;
-        }
 
-        public void InputMove(float moveAxisForward, float moveAxisRight, bool sprint, Quaternion cameraPlanarRotation)
+        public MoveModule(MoveConfig moveConf, IPhysicsController physicsController, IInputController input) 
         {
-            Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(moveAxisRight, 0f, moveAxisForward), 1f);
-            _moveInputVector = cameraPlanarRotation * moveInputVector;
-            _sprint = sprint;
+            _moveConfig = moveConf;
+            _physicsController = physicsController;
+            _inputController = input;
         }
 
-        public void HandleMoveing(ref Vector3 currentVelocity, float deltaTime)
+        public void InputMove()
+        {
+            Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(_inputController.MoveAxisRight, 0f, _inputController.MoveAxisForward), 1f);
+            _moveInputVector = _physicsController.CameraPlanarRotation * moveInputVector;
+            _sprint = _inputController.Sprint;
+        }
+
+        public void HandleMoveing()
         {
             Vector3 targetMovementVelocity = Vector3.zero;
-            if (_motor.GroundingStatus.IsStableOnGround)
+            if (_physicsController.Motor.GroundingStatus.IsStableOnGround)
             {
                 // Reorient velocity on slope
-                currentVelocity = _motor.GetDirectionTangentToSurface(currentVelocity, _motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
+                _physicsController.CurrentVelocity = _physicsController.Motor.GetDirectionTangentToSurface(_physicsController.CurrentVelocity, _physicsController.Motor.GroundingStatus.GroundNormal) *  _physicsController.CurrentVelocity.magnitude;
 
                 // Calculate target velocity
-                Vector3 inputRight = Vector3.Cross(_moveInputVector, _motor.CharacterUp);
-                Vector3 reorientedInput = Vector3.Cross(_motor.GroundingStatus.GroundNormal, inputRight).normalized * _moveInputVector.magnitude;
-                targetMovementVelocity = reorientedInput * (_sprint ? _maxStableMoveSpeed * _sprintMutlySpeed : _maxStableMoveSpeed);
+                Vector3 inputRight = Vector3.Cross(_moveInputVector, _physicsController.Motor.CharacterUp);
+                Vector3 reorientedInput = Vector3.Cross(_physicsController.Motor.GroundingStatus.GroundNormal, inputRight).normalized * _moveInputVector.magnitude;
+                targetMovementVelocity = reorientedInput * (_sprint ? _moveConfig.MaxStableMoveSpeed * _moveConfig.SprintMutlySpeed : _moveConfig.MaxStableMoveSpeed);
 
                 // Smooth movement Velocity
-                currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-_stableMovementSharpness * deltaTime));
+                _physicsController.CurrentVelocity = Vector3.Lerp(_physicsController.CurrentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-_moveConfig.StableMovementSharpness * _physicsController.DeltaTime));
             }
             else
             {
                 // Add move input
                 if (_moveInputVector.sqrMagnitude > 0f)
                 {
-                    targetMovementVelocity = _moveInputVector * _maxAirMoveSpeed;
+                    targetMovementVelocity = _moveInputVector * _moveConfig.MaxAirMoveSpeed;
 
                     // Prevent climbing on un-stable slopes with air movement
-                    if (_motor.GroundingStatus.FoundAnyGround)
+                    if (_physicsController.Motor.GroundingStatus.FoundAnyGround)
                     {
-                        Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(_motor.CharacterUp, _motor.GroundingStatus.GroundNormal), _motor.CharacterUp).normalized;
+                        Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(_physicsController.Motor.CharacterUp, _physicsController.Motor.GroundingStatus.GroundNormal), _physicsController.Motor.CharacterUp).normalized;
                         targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
                     }
 
-                    Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, _gravity);
-                    currentVelocity += velocityDiff * _airAccelerationSpeed * deltaTime;
+                    Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - _physicsController.CurrentVelocity, _moveConfig.Gravity);
+                    _physicsController.CurrentVelocity += velocityDiff * _moveConfig.AirAccelerationSpeed * _physicsController.DeltaTime;
                 }
 
                 // Gravity
-                currentVelocity += _gravity * deltaTime;
+                _physicsController.CurrentVelocity += _moveConfig.Gravity * _physicsController.DeltaTime;
 
                 // Drag
-                currentVelocity *= (1f / (1f + (_drag * deltaTime)));
+                _physicsController.CurrentVelocity *= (1f / (1f + (_moveConfig.Drag * _physicsController.DeltaTime)));
             }
         }
     }
