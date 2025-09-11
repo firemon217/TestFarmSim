@@ -3,24 +3,24 @@ using UnityEngine;
 
 namespace Controller
 {
-    public class RotateModule
+    public class RotateModule : IMovementModule
     {
         private Vector3 _lookInputVector;
         private RotateConfig _rotateConfig;
         private IPhysicsController _physicsController;
-        private IInputController _inputController;
+        private AInputController _inputController;
         
 
         public Quaternion CameraPlanarRotation;
 
-        public RotateModule(RotateConfig rotateConfig, IPhysicsController physicsController, IInputController inputController) 
+        public RotateModule(RotateConfig rotateConfig, IPhysicsController physicsController, AInputController inputController) 
         {
             _inputController = inputController;
             _rotateConfig = rotateConfig;
             _physicsController = physicsController;
         }
 
-        public void InputRotate()
+        public void HandleInput()
         {
             // Calculate camera direction and rotation on the character plane
             Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(_inputController.CameraRotation * Vector3.forward, _physicsController.Motor.CharacterUp).normalized;
@@ -32,7 +32,7 @@ namespace Controller
             _lookInputVector = cameraPlanarDirection;
         }
 
-        public void HandlRotate()
+        public void HandleUpdate()
         {
             if (_lookInputVector != Vector3.zero && _rotateConfig.OrientationSharpness > 0f)
             {

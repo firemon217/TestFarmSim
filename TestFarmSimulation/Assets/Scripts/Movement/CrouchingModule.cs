@@ -3,23 +3,23 @@ using UnityEngine;
 
 namespace Controller
 {
-    public class CrouchingModule
+    public class CrouchingModule : IMovementModule
     {
         private bool _shouldBeCrouching = false;
         private bool _isCrouching = false;
 
         private IPhysicsController _physicsController;
         private CrouchConfig _crouchConfig;
-        private IInputController _inputController;
+        private AInputController _inputController;
 
-        public CrouchingModule(CrouchConfig crouchConfig, IPhysicsController physicsController, IInputController inputController) 
+        public CrouchingModule(CrouchConfig crouchConfig, IPhysicsController physicsController, AInputController inputController) 
         {
             _physicsController = physicsController;
             _crouchConfig = crouchConfig;
             _inputController = inputController;
         }
 
-        public void InputCrouching()
+        public void HandleInput()
         {
             if (_inputController.CrouchDown)
             {
@@ -31,7 +31,7 @@ namespace Controller
             }
         }
 
-        public void HandleCrouching()
+        public void HandleUpdate()
         {
             if (!_isCrouching && _shouldBeCrouching)
             {

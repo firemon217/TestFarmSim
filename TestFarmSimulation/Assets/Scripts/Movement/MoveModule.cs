@@ -4,31 +4,31 @@ using UnityEngine;
 
 namespace Controller
 {
-    public class MoveModule
+    public class MoveModule : IMovementModule
     {
         private MoveConfig _moveConfig;
         private IPhysicsController _physicsController;
-        private IInputController _inputController;
+        private AInputController _inputController;
 
         private bool _sprint = false;
         private Vector3 _moveInputVector;
 
 
-        public MoveModule(MoveConfig moveConf, IPhysicsController physicsController, IInputController input) 
+        public MoveModule(MoveConfig moveConf, IPhysicsController physicsController, AInputController input) 
         {
             _moveConfig = moveConf;
             _physicsController = physicsController;
             _inputController = input;
         }
 
-        public void InputMove()
+        public void HandleInput()
         {
             Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(_inputController.MoveAxisRight, 0f, _inputController.MoveAxisForward), 1f);
             _moveInputVector = _physicsController.CameraPlanarRotation * moveInputVector;
             _sprint = _inputController.Sprint;
         }
 
-        public void HandleMoveing()
+        public void HandleUpdate()
         {
             Vector3 targetMovementVelocity = Vector3.zero;
             if (_physicsController.Motor.GroundingStatus.IsStableOnGround)

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Controller
 {
-    public class JumpingModule
+    public class JumpingModule : IMovementModule
     {
 
         private bool _jumpRequested = false;
@@ -16,17 +16,26 @@ namespace Controller
 
         private IPhysicsController _physicsController;
         private JumpConfig _jumpConfig;
-        private IInputController _inputController;
+        private AInputController _inputController;
 
 
-        public JumpingModule(JumpConfig jumpConfig, IPhysicsController physicsController, IInputController inputController)
+        public JumpingModule(JumpConfig jumpConfig, IPhysicsController physicsController, AInputController inputController)
         {
             _physicsController = physicsController;
             _jumpConfig = jumpConfig;
             _inputController = inputController;
         }
 
-        public void HandleJumping()
+        public void HandleInput()
+        {
+            if (_inputController.JumpDown)
+            {
+                _timeSinceJumpRequested = 0f;
+                _jumpRequested = true;
+            }
+        }
+
+        public void HandleUpdate()
         {
             _jumpedThisFrame = false;
             _timeSinceJumpRequested += _physicsController.DeltaTime;
@@ -52,15 +61,6 @@ namespace Controller
                     _jumpConsumed = true;
                     _jumpedThisFrame = true;
                 }
-            }
-        }
-
-        public void InputJump()
-        {
-            if (_inputController.JumpDown)
-            {
-                _timeSinceJumpRequested = 0f;
-                _jumpRequested = true;
             }
         }
 
