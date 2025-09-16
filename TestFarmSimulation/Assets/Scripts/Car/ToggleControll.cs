@@ -1,45 +1,50 @@
 using NWH.WheelController3D;
 using UnityEngine;
 
-public class ToggleControll
+
+namespace Car
 {
-    private GameObject _player;
-    private GameObject _car;
-    private CarController _carController;
-    private bool isActiveCar = false;
-
-    public ToggleControll(GameObject car)
+    public class ToggleControll : MonoBehaviour
     {
-        _car = car;
-    }
+        [SerializeField] private GameObject _camera;
+        [SerializeField] private GameObject _cinemachineCamera;
+        [SerializeField] private CarController _carController;
+        [SerializeField] private Transform _exitPoint;
 
-    public void SetPlayerObject(GameObject player)
-    {
-        _player = player;
-    }
+        private Player.Player _player;
 
-    public void UnsetPlayerObject()
-    {
-        if(!isActiveCar) _player = null;
-    }
+        public bool Enabled = false;
 
-    public void Init()
-    {
-        _carController = _car.GetComponent<CarController>();
-        _carController.enabled = false;
-    }
-
-    public void Toggle()
-    {
-        if(isActiveCar)
+        private void Awake()
         {
-            _player.SetActive(true);
+            _camera.SetActive(false);
+            _cinemachineCamera.SetActive(false);
             _carController.enabled = false;
         }
-        if(!isActiveCar && _player != null)
+
+        public void EntryCar(Player.Player player)
         {
-            _player.SetActive(false);
-            _carController.enabled = true;
+            _player = player;
+            Debug.Log(_player);
+            if (_player != null)
+            {
+                _camera.SetActive(true);
+                _cinemachineCamera.SetActive(true);
+                _player.PlayerObject.SetActive(false);
+                _carController.enabled = true;
+                Enabled = true;
+            }
+        }
+
+        public void ExitCar()
+        {
+            _player.PlayerObject.SetActive(true);
+            _player.Teleport(_exitPoint.position);
+            _camera.SetActive(false);
+            _cinemachineCamera.SetActive(false);
+            _carController.enabled = false;
+            _player = null;
+            Enabled = false;
         }
     }
 }

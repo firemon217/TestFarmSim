@@ -1,13 +1,16 @@
 using UnityEngine;
 
-public class Instrument
+namespace Items
 {
-    private ScriptableInstruments _instrumentData;
-
-    public ScriptableInstruments InstrumentData { get => _instrumentData; set => _instrumentData = value; }
-
-    public Instrument(ScriptableInstruments instrumentData)
+    public class Instrument : Item
     {
-        _instrumentData = instrumentData;
+        private ScriptableInstruments _instrumentData;
+
+        public ScriptableInstruments InstrumentData { get => _instrumentData; set => _instrumentData = value; }
+
+        public Instrument(ScriptableInstruments instrumentData) : base(instrumentData)
+        {
+            _instrumentData = instrumentData;
+        }
     }
 }

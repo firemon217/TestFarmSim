@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using Controller;
 using KinematicCharacterController;
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -21,6 +24,8 @@ namespace Player
 
             // Collision for crouching ???
             [SerializeField] private Collider[] _probedColliders = new Collider[8];
+            [SerializeField] private List<Collider> IgnoredColliders = new List<Collider>();
+
             public Collider[] ProbedColliders { get => _probedColliders; set => _probedColliders = value; }
 
             // Controlls modules
@@ -55,12 +60,16 @@ namespace Player
                 _rotate = new RotateModule(RotateConfig, this, PlayerInputs);
                 _jumping = new JumpingModule(JumpConfig, this, PlayerInputs);
                 _crouching = new CrouchingModule(CrouchConfig, this, PlayerInputs);
-
             }
 
             private void Update()
             {
                 _inputManager.Update();
+            }
+
+            public void Teleport(Vector3 pos)
+            {
+                Motor.SetPosition(pos);
             }
 
             public void SetInputs()
@@ -83,8 +92,17 @@ namespace Player
                 currentRotation = CurrentRotation;
             }
 
+            public void LockCamera(bool isLocked)
+            {
+                if (isLocked)
+                    Camera.GetComponent<CinemachineInputAxisController>().enabled = false;
+                else
+                    Camera.GetComponent<CinemachineInputAxisController>().enabled = true;
+            }
+
             public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
             {
+
                 // handle moveing
                 _move.HandleUpdate();
 
@@ -133,6 +151,10 @@ namespace Player
 
             public bool IsColliderValidForCollisions(Collider coll)
             {
+                if (IgnoredColliders.Contains(coll))
+                {
+                    return false;
+                }
                 return true;
             }
 

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,33 +11,31 @@ namespace Player
         {
             private GameInput _gameInput;
             private PlayerInventory _inventory;
-            private PlayerInputInventory _playerInputInventory;
 
-            public PlayerUpdateInputInventory(PlayerInventory inventory, PlayerInputInventory playerInputInventory)
+            public event Action<bool> OnToggleInventory;
+
+            public PlayerUpdateInputInventory(PlayerInventory inventory)
             {
                 _gameInput = new GameInput();
                 _gameInput.Enable();
 
                 _inventory = inventory;
-                _playerInputInventory = playerInputInventory;
-            }
-
-            public void Update()
-            {
-                _inventory.SetInputs();
             }
 
             public void Enable()
             {
-                _gameInput.GamePlay.Inventory.started += InventoryToggle;
+                _gameInput.GamePlay.Inventory.started += InventoryOpen;
+                _gameInput.GamePlay.Inventory.canceled += InventoryClose;
             }
 
             public void Disable()
             {
-                _gameInput.GamePlay.Inventory.started -= InventoryToggle;
+                _gameInput.GamePlay.Inventory.started -= InventoryOpen;
+                _gameInput.GamePlay.Inventory.canceled += InventoryClose;
             }
 
-            private void InventoryToggle(InputAction.CallbackContext obj) => _playerInputInventory.OnInventoryOpen = !_playerInputInventory.OnInventoryOpen;
+            private void InventoryOpen(InputAction.CallbackContext obj) => OnToggleInventory?.Invoke(true);
+            private void InventoryClose(InputAction.CallbackContext obj) => OnToggleInventory?.Invoke(false);
         }
     }
 }
